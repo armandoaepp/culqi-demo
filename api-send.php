@@ -13,6 +13,13 @@ if (isset($_GET["accion"])) {
     $evento = $inputs->accion;
 }
 
+
+// $response = array('msg' => 'Registrado correcto', 'error' => false, 'data' => []);
+
+// $jsn = json_encode($response);
+//         print_r($jsn);
+// return ;
+
 switch ($evento) {
 
     case "set":
@@ -26,13 +33,13 @@ switch ($evento) {
             // $telefono = !empty($inputs->telefono) ? $inputs->telefono : '';
             // $direccion = !empty($inputs->direccion) ? $inputs->direccion : '';
             $monto = !empty($inputs->monto) ? $inputs->monto : 990;
-            $tipo_moneda = !empty($inputs->tipo_moneda) ? $inputs->tipo_moneda : "USA";
+            $tipo_moneda = !empty($inputs->tipo_moneda) ? $inputs->tipo_moneda : "USD";
 
             $cliente = $nombre . " " .$apellidos ;
 
 
             if (create_charge($token, $email, $monto, $cliente,  $tipo_moneda) == true) {
-                // $estado = 1;
+                $estado = 1;
 
             } else {
                 $estado = 0;

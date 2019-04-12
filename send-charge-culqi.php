@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-function create_charge($TOKEN, $EMAIL, $MONTO, $META_CLIENTE, $TIPO_MONEDA = 'USA'){
+function create_charge($TOKEN, $EMAIL, $MONTO, $META_CLIENTE, $TIPO_MONEDA = 'USD'){
   try {
 
     // Cargamos Requests y Culqi PHP

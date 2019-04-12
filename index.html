@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>culqui</title>
+</head>
+
+<body>
+
+  Pagar: <button id="buyButton"> pagar online </button>
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+  <!-- Incluye Culqi Checkout en tu sitio web-->
+  <script src="https://checkout.culqi.com/js/v3"></script>
+
+  <script>
+    // Configura tu llave pública
+    Culqi.publicKey = 'pk_test_gsfazcHfm3ksrpES';
+    // Configura tu Culqi Checkout
+    Culqi.settings({
+      title: 'Template',
+      currency: 'USA',
+      description: 'Admin Template',
+      amount: 990
+    });
+
+    // Usa la funcion Culqi.open() en el evento que desees
+    $('#buyButton').on('click', function (e) {
+      // Abre el formulario con las opciones de Culqi.settings
+      Culqi.open();
+      e.preventDefault();
+    });
+
+
+    function culqi() {
+      console.log(Culqi.token);
+      if (Culqi.token) { // ¡Objeto Token creado exitosamente!
+        var token = Culqi.token.id;
+        var email = Culqi.token.email;
+        console.log(token);
+        console.log(email);
+
+
+        //processFormLibroDigital();
+        // var inputs = $('#formlibrodigital').serializeFormJSON();
+        var inputs = {};
+        inputs.accion = 'set';
+        inputs.token = token;
+        inputs.email = email;
+        inputs.monto = 990;
+        // inputs.tipolibro = $("#descrip").val();
+
+        var params = JSON.stringify(inputs);
+        console.log(params);
+        // $("#modalRptaOper").modal();
+        $.ajax({
+          // url: './api/ajax/libro_digital/IndexLibroDigital.php',
+          url: './send-charge-culqi.php',
+          dataType: 'json',
+          type: 'post',
+          contentType: 'application/json',
+          data: params,
+          processData: false,
+          success: function (data, textStatus, jQxhr) {
+
+            console.log(data);
+
+            /* if (!data.error) {
+              $("#modalRptaOper").modal("hide");
+
+              $("#modalRptaOkCompra").modal();
+
+              setTimeout(function () {
+                $("#modalRptaOkCompra").modal("hide");
+              }, 15000);
+            }
+            else {
+              console.log(data.msg);
+              // let error = data.msg;
+              var msg = '';
+
+              if (isJson(data.msg)) {
+                msg_data = JSON.parse(data.msg);
+                msg = msg_data.user_message;
+                console.log(msg_data.user_message);
+              }
+              else {
+                msg = data.msg;
+              }
+
+              $("#modalRptaErrorCompra #msjError").html(msg);
+
+              var modal_Error = $("#modalRptaErrorCompra");
+
+              modal_Error.modal();
+
+              $("#modalRptaOper").modal("hide");
+
+              setTimeout(function () {
+                modal_Error.modal("hide");
+              }, 10000);
+            } */
+
+
+          },
+          error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+          }
+        });
+
+
+        // alert('Se ha creado un token:' + token);
+      } else { // ¡Hubo algún problema!
+        // Mostramos JSON de objeto error en consola
+        console.log(Culqi.error);
+        alert(Culqi.error.user_message);
+      }
+    };
+
+
+  </script>
+
+
+</body>
+
+</html>

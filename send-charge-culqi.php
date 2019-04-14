@@ -1,18 +1,18 @@
 <?php
 header('Content-Type: application/json');
 
-function create_charge($TOKEN, $EMAIL, $MONTO, $META_CLIENTE, $TIPO_MONEDA = 'USD'){
+// function create_charge($TOKEN, $EMAIL, $MONTO, $META_CLIENTE, $TIPO_MONEDA = 'USD'){
+  function create_charge($params){
   try {
 
     // Cargamos Requests y Culqi PHP
-    // include_once dirname(__FILE__).'/libraries/Requests/library/Requests.php';
+
+    // require "culqi-php/culqi-php-develop/Requests-master/library/Requests.php";
     // Requests::register_autoloader();
-    // include_once dirname(__FILE__).'/libraries/culqi-php/lib/culqi.php';
+    // require "culqi-php/culqi-php-develop/lib/culqi.php";
 
-
-    require "culqi-php/culqi-php-develop/Requests-master/library/Requests.php";
-    Requests::register_autoloader();
-    require "culqi-php/culqi-php-develop/lib/culqi.php";
+    // require 'vendor/autoload.php';
+    extract($params);
 
     require "ConexApiCulqi.php";
 
@@ -21,18 +21,28 @@ function create_charge($TOKEN, $EMAIL, $MONTO, $META_CLIENTE, $TIPO_MONEDA = 'US
 
     $culqi = new Culqi\Culqi(array('api_key' => $SECRET_API_KEY));
 
+
     $charge = $culqi->Charges->create(
-      array(
-        "currency_code" => $TIPO_MONEDA,
-        "email" => "$EMAIL",
-        "amount" => "$MONTO",
-        "source_id" => $TOKEN ,
-        "metadata" => array(
-          "Cliente" => "$META_CLIENTE",
-        )
-      )
-    );
-    //echo json_encode($charge);
+              array(
+                "amount" => $amount,
+                "capture" => true,
+                "currency_code" => $currency_code,
+                "description" => "admin template bootstrap 4",
+                "email" => $email,
+                "source_id" => $source_id,
+                "antifraud_details" => array(
+                  "address" => "Compra-$code",
+                  // "address_city" => "LIMA",
+                  // "country_code" => "PE",
+                  // "first_name" => "Will",
+                  // "last_name" => "Muro",
+                  // "phone_number" => "9889678986",
+                ),
+                // "installments" => 0,
+              )
+          );
+
+
     return true;
   }
   catch (Exception $e) {

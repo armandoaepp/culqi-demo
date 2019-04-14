@@ -2,6 +2,11 @@
 # Autor: Armando Enrique Pisfil Puemape tw: @armandoaepp
 header('content-type: application/json; charset=utf-8');
 
+// require 'vendor/autoload.php';
+require __DIR__.'/bootstrap/autoload.php';
+
+use App\Controllers\CargoController;
+
 include_once "./send-charge-culqi.php";      #LINEA xa DESARROLLO
 
 // para crear usuario
@@ -14,32 +19,53 @@ if (isset($_GET["accion"])) {
 }
 
 
-// $response = array('msg' => 'Registrado correcto', 'error' => false, 'data' => []);
-
-// $jsn = json_encode($response);
-//         print_r($jsn);
-// return ;
 
 switch ($evento) {
 
     case "set":
         try {
 
-            $nombre ='';
-            $apellidos = '';
+            $count = App\Models\Cargo::count();
 
-            $token = $inputs->token;
-            $email = $inputs->email;
+            $code = ( ($count + 1 ) * 30)  ;
+            $code = str_pad($code, 5, "0", STR_PAD_LEFT);
+
+            $nombre        = 'Armando ';
+            $apellidos     = 'Pisfil P';
+            $amount        = !empty($inputs->monto) ? $inputs->monto            : 990;
+            $currency_code = !empty($inputs->tipo_moneda) ? $inputs->tipo_moneda: "USD";
+            $description   = !empty($inputs->descripcion) ? $inputs->descripcion: "";
+
+            $email         = $inputs->email;
+            $source_id     = $inputs->token;
+            $estado        = 1 ;
             // $telefono = !empty($inputs->telefono) ? $inputs->telefono : '';
             // $direccion = !empty($inputs->direccion) ? $inputs->direccion : '';
-            $monto = !empty($inputs->monto) ? $inputs->monto : 990;
-            $tipo_moneda = !empty($inputs->tipo_moneda) ? $inputs->tipo_moneda : "USD";
 
             $cliente = $nombre . " " .$apellidos ;
 
 
-            if (create_charge($token, $email, $monto, $cliente,  $tipo_moneda) == true) {
+            $params = array(
+                'code'          => $code,
+                'nombre'        => $nombre,
+                'apellidos'     => $apellidos,
+                'amount'        => $amount,
+                'currency_code' => $currency_code,
+                'description'   => $description,
+                'email'         => $email,
+                'source_id'     => $source_id,
+                'estado'        => $estado,
+            );
+
+            // $demo = CargoController::save($params) ;
+
+
+
+            // if (create_charge($token, $email, $amount, $cliente,  $currency_code) == true) {
+            if (create_charge($params) == true) {
                 $estado = 1;
+
+                $status = CargoController::save($params) ;
 
             } else {
                 $estado = 0;

@@ -30,7 +30,7 @@ $capsule = new Capsule;
     'prefix'    => '',
   ] ;
 
-$capsule->addConnection($cnx_local);
+$capsule->addConnection($cnx_prod);
 
 // Set the event dispatcher used by Eloquent models... (optional)
 use Illuminate\Events\Dispatcher;

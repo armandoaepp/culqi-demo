@@ -30,8 +30,8 @@ switch ($evento) {
             $code = ( ($count + 1 ) * 30)  ;
             $code = str_pad($code, 5, "0", STR_PAD_LEFT);
 
-            $nombre        = 'Armando ';
-            $apellidos     = 'Pisfil P';
+            $nombre        = '';
+            $apellidos     = '';
             $amount        = !empty($inputs->monto) ? $inputs->monto            : 990;
             $currency_code = !empty($inputs->tipo_moneda) ? $inputs->tipo_moneda: "USD";
             $description   = !empty($inputs->descripcion) ? $inputs->descripcion: "";
@@ -65,7 +65,9 @@ switch ($evento) {
             if (create_charge($params) == true) {
                 $estado = 1;
 
-                $status = CargoController::save($params) ;
+                $cargo_controller = new CargoController();
+
+                $status = $cargo_controller->save($params) ;
 
             } else {
                 $estado = 0;
@@ -86,3 +88,34 @@ switch ($evento) {
 }
 
 
+// function sendMailShopping($nombre, $email, $audio)
+function sendMailShopping($params)
+{
+  extract($params) ;
+
+  $tipoLib = ($audio==1)?"Audio Libro":"Libro Digital";
+  $data = array(
+  'NOMBRE_CLI'  => $nombre,
+  'TIPO_LIBRO'  => $tipoLib
+  );
+
+  $file = APP."views/mail-temp.phtml";
+  $template = file_get_contents($file);
+  foreach ($data as $clave=>$valor){
+    $template = str_replace("{".$clave."}", strtoupper($valor), $template);
+    //
+    //echo "{$clave}"."<br>";
+  }
+  //echo $template;
+  $BODY_MSJ = $template;
+  unset($clave);unset($valor);
+
+  $header = "MIME-Version: 1.0\r\n";
+  $header .= "Content-type: text/html; charset=utf-8\r\n";
+  $header .= "X-Priority: 3\n";
+  $header .= "X-MSMail-Priority: Normal\n";
+  $header .= "X-Mailer:PHP/".phpversion()."\n";
+  $header .= "From: Libro Digital <noreply@unnuevopoder.com> \r\n";
+  $header .= "Bcc: marlon@catmedia.com.pe \r\n";
+  mail($email,"Un Nuevo Poder - $tipoLib",utf8_decode($BODY_MSJ),$header);
+}

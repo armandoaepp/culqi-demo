@@ -18,6 +18,8 @@ if (isset($_GET["accion"])) {
     $evento = $inputs->accion;
 }
 
+// echo date('YmdHis');
+
 
 
 switch ($evento) {
@@ -68,6 +70,7 @@ switch ($evento) {
                 $cargo_controller = new CargoController();
 
                 $status = $cargo_controller->save($params) ;
+                sendMailShopping($params) ;
 
             } else {
                 $estado = 0;
@@ -95,11 +98,10 @@ function sendMailShopping($params)
 
   $tipoLib = ($audio==1)?"Audio Libro":"Libro Digital";
   $data = array(
-  'NOMBRE_CLI'  => $nombre,
-  'TIPO_LIBRO'  => $tipoLib
+  'code'  => $code,
   );
 
-  $file = APP."views/mail-temp.phtml";
+  $file = APP."views/mail-descarga.phtml";
   $template = file_get_contents($file);
   foreach ($data as $clave=>$valor){
     $template = str_replace("{".$clave."}", strtoupper($valor), $template);
@@ -108,14 +110,15 @@ function sendMailShopping($params)
   }
   //echo $template;
   $BODY_MSJ = $template;
-  unset($clave);unset($valor);
+//   unset($clave);unset($valor);
 
   $header = "MIME-Version: 1.0\r\n";
   $header .= "Content-type: text/html; charset=utf-8\r\n";
   $header .= "X-Priority: 3\n";
   $header .= "X-MSMail-Priority: Normal\n";
   $header .= "X-Mailer:PHP/".phpversion()."\n";
-  $header .= "From: Libro Digital <noreply@unnuevopoder.com> \r\n";
-  $header .= "Bcc: marlon@catmedia.com.pe \r\n";
-  mail($email,"Un Nuevo Poder - $tipoLib",utf8_decode($BODY_MSJ),$header);
+  $header .= "From: Admin template <informes@armandotuweb.net> \r\n";
+//   $header .= "Bcc: marlon@catmedia.com.pe \r\n";
+  $header .= "Cc: armandoaepp@gmail.com \r\n";
+  mail($email,"Admin Template Bootstrap ",utf8_decode($BODY_MSJ),$header);
 }
